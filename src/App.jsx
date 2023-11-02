@@ -14,6 +14,7 @@ function App() {
   const [allSongs, setSongCount] = useState(177)
   const [displayedData, setData] = useState([])
   const [song, setSong] = useState({})
+  const [album, setAlbum] = useState({})
 
   const baseURL = "https://taylor-swift-api.sarbo.workers.dev"
   
@@ -26,16 +27,23 @@ function App() {
 
   getSongTotal()
 
+  const getAlbumTitle = (album_id) => {
+    const endpoint = "/albums/" + album_id
+    fetch(baseURL + endpoint)
+      .then(response => response.json())
+      .then(data => setAlbum(data))
+  }
+
   const getSongTitle = (id) => {
     fetch(baseURL + /songs/ + id)
       .then(response => response.json())
       .then(data => setSong(data))
-      .then(() => console.log(song))
   }
 
   const reload = () => {
     const id = parseInt(Math.random() * allSongs)
     getSongTitle(id)
+    getAlbumTitle(2)
     const endpoint = `/lyrics/${id}`
     fetch(baseURL + endpoint)
       .then(res => res.json())
@@ -63,6 +71,7 @@ function App() {
           Refresh-Count: {count}
         </button>
         <h1>{song.song_title}</h1>
+        <h2>{album.title}</h2>
         {displayedData.map(element => <Display item={element}/>)}
       </div>
       <p className="read-the-docs">
