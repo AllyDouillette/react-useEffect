@@ -11,12 +11,32 @@ function Display ({item}) {
 
 function App() {
   const [count, setCount] = useState(1)
+  const [allSongs, setSongCount] = useState(177)
   const [displayedData, setData] = useState([])
+  const [song, setSong] = useState({})
 
-  const baseURL = "https://taylor-swift-api.sarbo.workers.dev/"
-  const endpoint = `lyrics?shouldRandomizeLyrics=true&numberOfParagraphs=1`
+  const baseURL = "https://taylor-swift-api.sarbo.workers.dev"
   
+  const getSongTotal = () => {
+    const endpoint = "/songs"
+    fetch(baseURL + endpoint)
+      .then(response => response.json())
+      .then(data => setSongCount(data.length))
+  }
+
+  getSongTotal()
+
+  const getSongTitle = (id) => {
+    fetch(baseURL + /songs/ + id)
+      .then(response => response.json())
+      .then(data => setSong(data))
+      .then(() => console.log(song))
+  }
+
   const reload = () => {
+    const id = parseInt(Math.random() * allSongs)
+    getSongTitle(id)
+    const endpoint = `/lyrics/${id}`
     fetch(baseURL + endpoint)
       .then(res => res.json())
       .then(data => {
@@ -42,6 +62,7 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           Refresh-Count: {count}
         </button>
+        <h1>{song.song_title}</h1>
         {displayedData.map(element => <Display item={element}/>)}
       </div>
       <p className="read-the-docs">
